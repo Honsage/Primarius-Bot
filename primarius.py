@@ -1,5 +1,5 @@
 from dotenv import dotenv_values
-from telebot import TeleBot
+from telebot import TeleBot, types
 from cats import get_cat_photo
 
 
@@ -11,9 +11,15 @@ bot = TeleBot(token=config['API_TOKEN'])
 def handle_start_command(message):
     chat_id = message.chat.id
     name = message.chat.first_name
+
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_newcat = types.KeyboardButton('/newcat')
+    keyboard.add(button_newcat)
+    
     bot.send_message(
         chat_id=chat_id,
-        text=f'Здравствуйте, {name}, я бот Primarius.'
+        text=f'Здравствуйте, {name}, я бот Primarius.',
+        reply_markup=keyboard
     )
 
 
@@ -34,7 +40,6 @@ def new_cat(message):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    print(message)
     chat_id = message.chat.id
     bot.send_message(
         chat_id=chat_id,
