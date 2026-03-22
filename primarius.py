@@ -1,10 +1,19 @@
 from dotenv import dotenv_values
 from telebot import TeleBot, types
+import logging
 from cats import get_cat_photo
 
 
 config = dotenv_values()
 bot = TeleBot(token=config['API_TOKEN'])
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    filename='primarius.log',
+    filemode='a',
+    level=logging.INFO,
+    encoding='utf-8'
+)
 
 
 @bot.message_handler(commands=['start'])
@@ -31,11 +40,11 @@ def new_cat(message):
     if response['is_succeed']:
         bot.send_photo(chat_id, response['url'])
     else:
+        logging.error(f'Ответ от Cat API не получен')
         bot.send_message(
             chat_id=chat_id,
             text='К сожалению, не получилось загрузить фото кота :('
         )
-
 
 
 @bot.message_handler(content_types=['text'])
@@ -47,4 +56,5 @@ def handle_text(message):
     )
 
 
-bot.polling()
+if __name__ == '__main__':
+    bot.polling()
